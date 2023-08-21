@@ -4,32 +4,34 @@
     box-sizing: border-box;
     font-family: "Poppins", sans-serif;
 }
-body {
+
+.body {
     background-color: #faf8ef;
 }
+
 .heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-h1 {
+
+.heading__title {
     color: #776e65;
+    font-size: 4em;
 }
+
 .container {
     position: absolute;
     transform: translate(-50%, -50%);
     left: 50%;
     top: 50%;
 }
-h1 {
-    font-size: 4em;
-}
-.score-container {
+
+.score-container__score {
     color: #776e65;
-}
-#score {
     font-weight: 600;
 }
+
 .grid {
     width: 25em;
     height: 25em;
@@ -40,6 +42,7 @@ h1 {
     flex-wrap: wrap;
     border-radius: 0.5em;
 }
+
 .box {
     width: 97.5px;
     height: 97.5px;
@@ -50,6 +53,7 @@ h1 {
     align-items: center;
     justify-content: center;
 }
+
 .cover-screen {
     position: absolute;
     top: 0;
@@ -62,7 +66,8 @@ h1 {
     justify-content: center;
     align-items: center;
 }
-#start-button {
+
+.cover-screen__start-button {
     background-color: #8f7a66;
     padding: 1em 2em;
     border: none;
@@ -71,59 +76,62 @@ h1 {
     letter-spacing: 0.2px;
     color: #ffffff;
 }
+
 .hide {
     display: none;
 }
-.box-2 {
+
+.box_value-2 {
     background-color: #eee4da;
     color: #727371;
 }
-.box-4 {
+
+.box_value-4 {
     background-color: #eee1c9;
     color: #727371;
 }
 
-.box-8 {
+.box_value-8 {
     background-color: #f3b27a;
     color: white;
 }
 
-.box-16 {
+.box_value-16 {
     background-color: #f69664;
     color: white;
 }
 
-.box-32 {
+.box_value-32 {
     background-color: #f77c5f;
     color: white;
 }
 
-.box-64 {
+.box_value-64 {
     background-color: #f75f3b;
     color: white;
 }
 
-.box-128 {
+.box_value-128 {
     background-color: #edd073;
     color: white;
 }
 
-.box-256 {
+.box_value-256 {
     background-color: #edcc63;
     color: white;
 }
 
-.box-512 {
+.box_value-512 {
     background-color: #edc651;
     color: white;
 }
 
-.box-1024 {
+.box_value-1024 {
     background-color: #eec744;
     color: white;
 }
 
-.box-2048 {
+.box_value-2048 {
     background-color: #ecc230;
     color: white;
 }
