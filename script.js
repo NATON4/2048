@@ -161,6 +161,38 @@ function sumAndFillCells(arr, reverseArr = false) {
     return matrix;
 }*/
 
+board.addEventListener("touchstart", (event) => {
+    isSwiped = true;
+    getXY(event);
+    initialX = touchX;
+    initialY = touchY;
+});
+
+board.addEventListener("touchmove", (event) => {
+    if (isSwiped) {
+        getXY(event);
+        let diffX = touchX - initialX;
+        let diffY = touchY - initialY;
+        if (Math.abs(diffY) > Math.abs(diffX)) {
+            swipeDirection = diffY > 0 ? "down" : "up";
+        } else {
+            swipeDirection = diffX > 0 ? "right" : "left";
+        }
+    }
+});
+
+board.addEventListener("touchend", () => {
+    isSwiped = false;
+    let swipeCalls = {
+        up: slideUp,
+        down: slideDown,
+        left: slideLeft,
+        right: slideRight,
+    };
+    swipeCalls[swipeDirection]();
+    document.getElementById("score").innerText = score;
+});
+
 function startGame() {
     score = 0;
     document.getElementById("score").innerText = score;
@@ -277,37 +309,6 @@ document.addEventListener("keydown", (e) => {
     document.getElementById("score").innerText = score;
 });
 
-board.addEventListener("touchstart", (event) => {
-    isSwiped = true;
-    getXY(event);
-    initialX = touchX;
-    initialY = touchY;
-});
-
-board.addEventListener("touchmove", (event) => {
-    if (isSwiped) {
-        getXY(event);
-        let diffX = touchX - initialX;
-        let diffY = touchY - initialY;
-        if (Math.abs(diffY) > Math.abs(diffX)) {
-            swipeDirection = diffX > 0 ? "down" : "up";
-        } else {
-            swipeDirection = diffX > 0 ? "right" : "left";
-        }
-    }
-});
-
-board.addEventListener("touchend", () => {
-    isSwiped = false;
-    let swipeCalls = {
-        up: slideUp,
-        down: slideDown,
-        left: slideLeft,
-        right: slideRight,
-    };
-    swipeCalls[swipeDirection]();
-    document.getElementById("score").innerText = score;
-});
 function continuouslyChangeBackgroundColors() {
     const colorMap = {
         'box_value-2': '#eee4da',
