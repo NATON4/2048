@@ -9,6 +9,19 @@ const columns = 4;
 
 let matrix;
 let score;
+let isSwiped;
+let touchY;
+let initialY = 0;
+let touchX;
+let initialX = 0;
+let swipeDirection;
+let rectLeft = board.getBoundingClientRect().left;
+let rectTop = board.getBoundingClientRect().top;
+
+const getXY = (e) => {
+    touchX = e.touches[0].pageX - rectLeft;
+    touchY = e.touches[0].pageY - rectTop;
+};
 
 function createGrid() {
 
@@ -167,12 +180,21 @@ function startGame() {
 
 startButton.addEventListener("click", () => {
     startGame();
+    swipeDirection = "";
 });
+
+function updateElement(rowIndex, columnIndex, value) {
+    matrix[rowIndex][columnIndex] = value;
+    const element = document.querySelector(`[data-position='${rowIndex}_${columnIndex}']`);
+    element.innerHTML = value ? value : "";
+    element.classList.value = "";
+    element.classList.add("box", `box_value-${value}`);
+}
 
 function slideDown() {
     for (let columnIndex = 0; columnIndex < columns; columnIndex++) {
         let num = [];
-
+        
         for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
             let indices = matrix[rowIndex][columnIndex];
             num.push(indices);
@@ -181,11 +203,7 @@ function slideDown() {
         num = sumAndFillCells(num, true);
         
         for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
-            matrix[rowIndex][columnIndex] = num[rowIndex];
-            const element = document.querySelector(`[data-position='${rowIndex}_${columnIndex}']`);
-            element.innerHTML = matrix[rowIndex][columnIndex] ? matrix[rowIndex][columnIndex] : "";
-            element.classList.value = "";
-            element.classList.add("box", `box_value-${matrix[rowIndex][columnIndex]}`);
+            updateElement(rowIndex, columnIndex, num[rowIndex]);
         }
     }
     generateRandomCell();
@@ -203,11 +221,7 @@ function slideUp() {
         num = sumAndFillCells(num);
         
         for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
-            matrix[rowIndex][columnIndex] = num[rowIndex];
-            const element = document.querySelector(`[data-position = '${rowIndex}_${columnIndex}']`);
-            element.innerHTML = matrix[rowIndex][columnIndex] ? matrix[rowIndex][columnIndex] : "";
-            element.classList.value = "";
-            element.classList.add("box", `box_value-${matrix[rowIndex][columnIndex]}`);
+            updateElement(rowIndex, columnIndex, num[rowIndex]);
         }
     }
     generateRandomCell();
@@ -225,11 +239,7 @@ function slideRight() {
         num = sumAndFillCells(num, true);
         
         for (let columnIndex = 0; columnIndex < columns; columnIndex++) {
-            matrix[rowIndex][columnIndex] = num[columnIndex];
-            let element = document.querySelector(`[data-position = '${rowIndex}_${columnIndex}']`);
-            element.innerHTML = matrix[rowIndex][columnIndex] ? matrix[rowIndex][columnIndex] : "";
-            element.classList.value = "";
-            element.classList.add("box", `box_value-${matrix[rowIndex][columnIndex]}`);
+            updateElement(rowIndex, columnIndex, num[columnIndex]);
         }
     }
     generateRandomCell();
@@ -247,15 +257,12 @@ function slideLeft() {
         num = sumAndFillCells(num);
         
         for (let columnIndex = 0; columnIndex < columns; columnIndex++) {
-            matrix[rowIndex][columnIndex] = num[columnIndex];
-            let element = document.querySelector(`[data-position = '${rowIndex}_${columnIndex}']`);
-            element.innerHTML = matrix[rowIndex][columnIndex] ? matrix[rowIndex][columnIndex] : "";
-            element.classList.value = "";
-            element.classList.add("box", `box_value-${matrix[rowIndex][columnIndex]}`);
+            updateElement(rowIndex, columnIndex, num[columnIndex]);
         }
     }
     generateRandomCell();
 }
+
 
 document.addEventListener("keydown", (e) => {
     if (e.code === "ArrowLeft") {
@@ -270,6 +277,37 @@ document.addEventListener("keydown", (e) => {
     document.getElementById("score").innerText = score;
 });
 
+board.addEventListener("touchstart", (event) => {
+    isSwiped = true;
+    getXY(event);
+    initialX = touchX;
+    initialY = touchY;
+});
+
+board.addEventListener("touchmove", (event) => {
+    if (isSwiped) {
+        getXY(event);
+        let diffX = touchX - initialX;
+        let diffY = touchY - initialY;
+        if (Math.abs(diffY) > Math.abs(diffX)) {
+            swipeDirection = diffX > 0 ? "down" : "up";
+        } else {
+            swipeDirection = diffX > 0 ? "right" : "left";
+        }
+    }
+});
+
+board.addEventListener("touchend", () => {
+    isSwiped = false;
+    let swipeCalls = {
+        up: slideUp,
+        down: slideDown,
+        left: slideLeft,
+        right: slideRight,
+    };
+    swipeCalls[swipeDirection]();
+    document.getElementById("score").innerText = score;
+});
 function continuouslyChangeBackgroundColors() {
     const colorMap = {
         'box_value-2': '#eee4da',
