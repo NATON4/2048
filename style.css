@@ -15,10 +15,15 @@
     align-items: center;
     justify-content: space-between;
 }
-
+.container_reset-button {
+    border-radius: 7px;
+    color: black;
+    background-color: #F3B27A;
+    border: none;
+}
 .heading__title {
     color: #776e65;
-    font-size: 4em;
+    font-size: 2em;
 }
 
 .container {
@@ -80,4 +85,69 @@
 
 .hide {
     display: none;
+}
+
+.box_value-2 {
+    background-color: #eee4da;
+}
+
+.box_value-4 {
+    background-color: #eee1c9;
+}
+
+.box_value-8 {
+    background-color: #f3b27a;
+}
+
+.box_value-16 {
+    background-color: #f69664;
+}
+
+.box_value-32 {
+    background-color: #f77c5f;
+}
+
+.box_value-64 {
+    background-color: #f75f3b;
+}
+
+.box_value-128 {
+    background-color: #edd073;
+}
+
+.box_value-256 {
+    background-color: #edcc63;
+}
+
+.box_value-512 {
+    background-color: #edc651;
+}
+
+.box_value-1024 {
+    background-color: #eec744;
+}
+
+.box_value-2048 {
+    background-color: #ecc230;
+}
+
+.box_value-2,
+.box_value-4,
+.box_value-8,
+.box_value-16,
+.box_value-32,
+.box_value-64,
+.box_value-128,
+.box_value-256,
+.box_value-512,
+.box_value-1024,
+.box_value-2048 {
+    color: black;
+}
+
+.container_reset-button {
+    height: 1.4rem;
+    width: 2rem;
+    background-color: #776e65;
+    color: white;
 }
