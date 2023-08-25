@@ -10,6 +10,8 @@
     background-color: #faf8ef;
 }
 
+.body { overscroll-behavior: none }
+
 .heading {
     display: flex;
     align-items: center;
