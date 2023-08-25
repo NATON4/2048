@@ -185,14 +185,37 @@ board.addEventListener("touchend", () => {
     document.getElementById("score").innerText = score;
 });
 
+function hideMainElements() {
+    coverScreen.classList.remove("hide");
+    container.classList.add("hide");
+    overText.classList.remove("hide");
+}
+
+function createRestartButton() {
+    const newButton = document.createElement("button");
+    newButton.innerText = "Restart Game";
+    newButton.classList.add("cover-screen__start-button");
+    newButton.addEventListener("click", resetGame);
+    startButton.replaceWith(newButton);
+}
+
+function clearMatrixFromLocalStorage() {
+    const savedGameState = localStorage.getItem("gameState");
+
+    if (savedGameState) {
+        const gameState = JSON.parse(savedGameState);
+        gameState.matrix = null;
+        localStorage.setItem("gameState", JSON.stringify(gameState));
+    }
+}
+
 function gameOverCheck() {
     if (!isPossibleMovesCheck()) {
-        coverScreen.classList.remove("hide");
-        container.classList.add("hide");
-        overText.classList.remove("hide");
+        hideMainElements();
         result.innerText = `Final score: ${score}`;
+        createRestartButton();
         updateBestScore();
-        startButton.innerText = "Restart Game";
+        clearMatrixFromLocalStorage();
     }
 }
 
