@@ -10,7 +10,10 @@
     background-color: #faf8ef;
 }
 
-.body { overscroll-behavior: none }
+html {
+    overscroll-behavior: none;
+    overflow: hidden;
+}
 
 .heading {
     display: flex;
