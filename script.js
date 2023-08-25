@@ -9,6 +9,7 @@ const columns = 4;
 
 let matrix;
 let score;
+let bestScore;
 let isSwiped;
 let touchY;
 let initialY = 0;
@@ -24,12 +25,21 @@ const getXY = (e) => {
 };
 
 function createGrid() {
-
     for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
         for (let columnIndex = 0; columnIndex < columns; columnIndex++) {
             const boxDiv = document.createElement("div");
             boxDiv.classList.add("box");
             boxDiv.setAttribute("data-position", `${rowIndex}_${columnIndex}`);
+
+            const cellValue = matrix[rowIndex][columnIndex];
+
+            if (cellValue !== 0) {
+                boxDiv.classList.add(`box_value-${cellValue}`);
+                boxDiv.innerText = cellValue;
+            } else {
+                boxDiv.classList.add("box_value-0");
+            }
+
             board.appendChild(boxDiv);
         }
     }
@@ -85,16 +95,6 @@ function hasEmptyBox(){
     return false;
 }
 
-function gameOverCheck() {
-    if (!isPossibleMovesCheck()) {
-        coverScreen.classList.remove("hide");
-        container.classList.add("hide");
-        overText.classList.remove("hide");
-        result.innerText = `Final score: ${score}`;
-        startButton.innerText = "Restart Game";
-    }
-}
-
 function generateRandomNumber() {
     return Math.random() < 0.5 ? 2 : 4;
 }
@@ -111,11 +111,13 @@ function generateRandomCell() {
             matrix[randomRow][randomCol] = randomNumber;
             currentCell.innerHTML = randomNumber;
             currentCell.classList.add(`box_value-${randomNumber}`);
+            saveGameState();
         } else {
             generateRandomCell();
-        }
+            saveGameState();        }
     } else {
         gameOverCheck();
+        saveGameState();
     }
 }
 
@@ -151,16 +153,6 @@ function sumAndFillCells(arr, reverseArr = false) {
     return arr;
 }
 
-/*function fillMatrix(matrix, value, rows, columns) {
-    for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
-        for (let columnIndex = 0; columnIndex < columns; columnIndex++) {
-            matrix[rowIndex][columnIndex] = value;
-        }
-    }
-    
-    return matrix;
-}*/
-
 board.addEventListener("touchstart", (event) => {
     isSwiped = true;
     getXY(event);
@@ -193,21 +185,88 @@ board.addEventListener("touchend", () => {
     document.getElementById("score").innerText = score;
 });
 
-function startGame() {
+function gameOverCheck() {
+    if (!isPossibleMovesCheck()) {
+        coverScreen.classList.remove("hide");
+        container.classList.add("hide");
+        overText.classList.remove("hide");
+        result.innerText = `Final score: ${score}`;
+        updateBestScore();
+        startButton.innerText = "Restart Game";
+    }
+}
+
+function saveGameState() {
+    const gameState = {
+        matrix: matrix,
+        score: score
+    };
+    localStorage.setItem("gameState", JSON.stringify(gameState));
+}
+
+function fillMatrixWithZeros() {
+    matrix = Array.from({ length: rows }, () => Array(columns).fill(0));
+}
+
+function startFullNewGame() {
     score = 0;
     document.getElementById("score").innerText = score;
-    board.innerHTML = "";
-    matrix = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-    ];
-    container.classList.remove("hide");
-    coverScreen.classList.add("hide");
+    hideBoard();
+    fillMatrixWithZeros();
     createGrid();
     generateRandomCell();
     generateRandomCell();
+    loadBestScore();
+    saveGameState();
+}
+
+function startGame() {
+    const userChoice = confirm("Restore the previous game?");
+    if (!userChoice) {
+        startFullNewGame();
+    } else {
+        const savedGameState = localStorage.getItem("gameState");
+        if (savedGameState) {
+            const gameState = JSON.parse(savedGameState);
+            matrix = gameState.matrix;
+            score = gameState.score;
+            document.getElementById("score").innerText = score;
+            hideBoard();
+            createGrid();
+            loadBestScore();
+        } else {
+            alert("No saved game found. Starting a new game.");
+            startFullNewGame();
+        }
+    }
+}
+
+function hideBoard() {
+    board.innerHTML = "";
+    container.classList.remove("hide");
+    coverScreen.classList.add("hide");
+}
+
+function loadBestScore() {
+    const savedBestScore = localStorage.getItem("bestScore");
+    bestScore = savedBestScore !== null ? parseInt(savedBestScore) : 0;
+    document.getElementById("best-score").innerText = bestScore;
+}
+
+function saveBestScore() {
+    localStorage.setItem("bestScore", bestScore.toString());
+}
+
+function updateBestScore() {
+    if (score > bestScore) {
+        bestScore = score;
+        document.getElementById("best-score").innerText = bestScore;
+        saveBestScore();
+    }
+}
+
+function resetGame() {
+    startFullNewGame();
 }
 
 startButton.addEventListener("click", () => {
@@ -244,7 +303,7 @@ function slideDown() {
 function slideUp() {
     for (let columnIndex = 0; columnIndex < columns; columnIndex++) {
         let num = [];
-        
+
         for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
             let indices = matrix[rowIndex][columnIndex];
             num.push(indices);
@@ -295,7 +354,6 @@ function slideLeft() {
     generateRandomCell();
 }
 
-
 document.addEventListener("keydown", (e) => {
     if (e.code === "ArrowLeft") {
         slideLeft();
@@ -307,33 +365,5 @@ document.addEventListener("keydown", (e) => {
         slideDown();
     }
     document.getElementById("score").innerText = score;
+    updateBestScore();
 });
-
-function continuouslyChangeBackgroundColors() {
-    const colorMap = {
-        'box_value-2': '#eee4da',
-        'box_value-4': '#eee1c9',
-        'box_value-8': '#f3b27a',
-        'box_value-16': '#f69664',
-        'box_value-32': '#f77c5f',
-        'box_value-64': '#f75f3b',
-        'box_value-128': '#edd073',
-        'box_value-256': '#edcc63',
-        'box_value-512': '#edc651',
-        'box_value-1024': '#eec744',
-        'box_value-2048': '#ecc230'
-    };
-
-    setInterval(() => {
-        for (const className in colorMap) {
-            const elements = document.getElementsByClassName(className);
-            const color = colorMap[className];
-
-            for (const element of elements) {
-                element.style.backgroundColor = color;
-            }
-        }
-    }, 5);
-}
-
-continuouslyChangeBackgroundColors();
