@@ -16,25 +16,30 @@ time, mark, audio, video {
     border: 0;
     vertical-align: baseline;
 }
-/* HTML5 display-role reset for older browsers */
+
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
     display: block;
 }
+
 body {
     line-height: 1;
 }
+
 ol, ul {
     list-style: none;
 }
+
 blockquote, q {
     quotes: none;
 }
+
 blockquote:before, blockquote:after,
 q:before, q:after {
     content: '';
     content: none;
 }
+
 table {
     border-collapse: collapse;
     border-spacing: 0;
@@ -160,50 +165,6 @@ html {
 
 .hide {
     display: none;
-}
-
-.box_value-2 {
-    background-color: #ffffff;
-}
-
-.box_value-4 {
-    background-color: #fff1d7;
-}
-
-.box_value-8 {
-    background-color: #f3b27a;
-}
-
-.box_value-16 {
-    background-color: #f69664;
-}
-
-.box_value-32 {
-    background-color: #f77c5f;
-}
-
-.box_value-64 {
-    background-color: #f75f3b;
-}
-
-.box_value-128 {
-    background-color: #edd073;
-}
-
-.box_value-256 {
-    background-color: #edcc63;
-}
-
-.box_value-512 {
-    background-color: #edc651;
-}
-
-.box_value-1024 {
-    background-color: #eec744;
-}
-
-.box_value-2048 {
-    background-color: #ecc230;
 }
 
 @media screen and (max-width: 1100px) {
