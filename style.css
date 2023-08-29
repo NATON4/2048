@@ -206,20 +206,6 @@ html {
     background-color: #ecc230;
 }
 
-.box_value-2,
-.box_value-4,
-.box_value-8,
-.box_value-16,
-.box_value-32,
-.box_value-64,
-.box_value-128,
-.box_value-256,
-.box_value-512,
-.box_value-1024,
-.box_value-2048 {
-    color: black;
-}
-
 @media screen and (max-width: 1100px) {
     .grid {
         align-items: center;
@@ -261,11 +247,13 @@ html {
     .score-container {
         font-size: 2vh;
     }
+
     .container_reset-button {
         background-color: white;
         width: 2.5vh;
         height: 2.5vh;
     }
+
     .score-container__score {
         color: rgba(255,211,82,1);
         font-weight: 600;

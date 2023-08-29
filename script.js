@@ -19,10 +19,10 @@ let swipeDirection;
 let rectLeft = board.getBoundingClientRect().left;
 let rectTop = board.getBoundingClientRect().top;
 
-const getXY = (e) => {
+function getXY(e){
     touchX = e.touches[0].pageX - rectLeft;
     touchY = e.touches[0].pageY - rectTop;
-};
+}
 
 function createGrid() {
     for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
@@ -200,22 +200,20 @@ function createRestartButton() {
 }
 
 function clearMatrixFromLocalStorage() {
-    const savedGameState = localStorage.getItem("gameState");
-
-    if (savedGameState) {
-        const gameState = JSON.parse(savedGameState);
-        gameState.matrix = null;
-        localStorage.setItem("gameState", JSON.stringify(gameState));
-    }
+    const gameState = {
+        matrix: null,
+        score: score
+    };
+    localStorage.setItem("gameState", JSON.stringify(gameState));
 }
 
 function gameOverCheck() {
     if (!isPossibleMovesCheck()) {
+        clearMatrixFromLocalStorage();
         hideMainElements();
         result.innerText = `Final score: ${score}`;
         createRestartButton();
         updateBestScore();
-        clearMatrixFromLocalStorage();
     }
 }
 
@@ -229,6 +227,7 @@ function saveGameState() {
 
 function fillMatrixWithZeros() {
     matrix = Array.from({ length: rows }, () => Array(columns).fill(0));
+    return matrix;
 }
 
 function startFullNewGame() {
@@ -244,23 +243,23 @@ function startFullNewGame() {
 }
 
 function startGame() {
-    const userChoice = confirm("Restore the previous game?");
-    if (!userChoice) {
+    const savedGameState = localStorage.getItem("gameState");
+    let savedMatrix = JSON.parse(savedGameState).matrix;
+    if (savedMatrix === null) {
         startFullNewGame();
+    }
+
+    const userChoice = confirm("Restore the previous game?");
+    if (userChoice) {
+        const gameState = JSON.parse(savedGameState);
+        matrix = gameState.matrix;
+        score = gameState.score;
+        document.getElementById("score").innerText = score;
+        hideBoard();
+        createGrid();
+        loadBestScore();
     } else {
-        const savedGameState = localStorage.getItem("gameState");
-        if (savedGameState) {
-            const gameState = JSON.parse(savedGameState);
-            matrix = gameState.matrix;
-            score = gameState.score;
-            document.getElementById("score").innerText = score;
-            hideBoard();
-            createGrid();
-            loadBestScore();
-        } else {
-            alert("No saved game found. Starting a new game.");
-            startFullNewGame();
-        }
+        startFullNewGame();
     }
 }
 
