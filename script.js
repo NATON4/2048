@@ -244,10 +244,6 @@ function startFullNewGame() {
 
 function startGame() {
     const savedGameState = localStorage.getItem("gameState");
-    let savedMatrix = JSON.parse(savedGameState).matrix;
-    if (savedMatrix === null) {
-        startFullNewGame();
-    }
 
     const userChoice = confirm("Restore the previous game?");
     if (userChoice) {
