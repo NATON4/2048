@@ -24,27 +24,6 @@ function getXY(e){
     touchY = e.touches[0].pageY - rectTop;
 }
 
-function createGrid() {
-    for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
-        for (let columnIndex = 0; columnIndex < columns; columnIndex++) {
-            const boxDiv = document.createElement("div");
-            boxDiv.classList.add("box");
-            boxDiv.setAttribute("data-position", `${rowIndex}_${columnIndex}`);
-
-            const cellValue = matrix[rowIndex][columnIndex];
-
-            if (cellValue !== 0) {
-                boxDiv.classList.add(`box_value-${cellValue}`);
-                boxDiv.innerText = cellValue;
-            } else {
-                boxDiv.classList.add("box_value-0");
-            }
-
-            board.appendChild(boxDiv);
-        }
-    }
-}
-
 function adjacentCheck(matrix) {
     const rows = matrix.length;
     const columns = matrix[0].length;
@@ -100,41 +79,49 @@ function generateRandomNumber() {
 }
 
 function generateRandomCell() {
-
     if (hasEmptyBox()) {
         let randomRow = randomPosition(matrix);
         let randomCol = randomPosition(matrix[randomPosition(matrix)]);
 
         if (matrix[randomRow][randomCol] === 0) {
             const randomNumber = generateRandomNumber();
-            const currentCell = document.querySelector(`[data-position = '${randomRow}_${randomCol}']`);
+            const colors = {
+                2: "#ffffff",
+                4: "#fff1d7",
+            };
+            const currentCell = document.querySelector(`[data-position='${randomRow}_${randomCol}']`);
             matrix[randomRow][randomCol] = randomNumber;
             currentCell.innerHTML = randomNumber;
+
+            if (colors[randomNumber]) {
+                currentCell.style.backgroundColor = colors[randomNumber];
+            }
+
             currentCell.classList.add(`box_value-${randomNumber}`);
             saveGameState();
         } else {
             generateRandomCell();
-            saveGameState();        }
+            saveGameState();
+        }
     } else {
         gameOverCheck();
         saveGameState();
     }
 }
 
+
 function removeZero(arr) {
-    return arr.filter(function(num) {
-        return num;
-    });
+    return arr.filter((num) => num);
 }
 
 function sumAndFillCells(arr, reverseArr = false) {
     arr = reverseArr ? removeZero(arr).reverse() : removeZero(arr);
 
-    for (let i = 0; i < arr.length - 1; i++) {
-        if (arr[i] === arr[i + 1]) {
-            arr[i] += arr[i + 1];
-            arr[i + 1] = 0;
-            score += arr[i];
+    for (let rowIndex = 0; rowIndex < arr.length - 1; rowIndex++) {
+        if (arr[rowIndex] === arr[rowIndex + 1]) {
+            arr[rowIndex] += arr[rowIndex + 1];
+            arr[rowIndex + 1] = 0;
+            score += arr[rowIndex];
         }
     }
 
@@ -243,6 +230,43 @@ function startFullNewGame() {
     saveGameState();
 }
 
+function createGrid() {
+    for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
+        for (let columnIndex = 0; columnIndex < columns; columnIndex++) {
+            const boxDiv = document.createElement("div");
+            const cellValue = matrix[rowIndex][columnIndex];
+            boxDiv.classList.add("box");
+            boxDiv.setAttribute("data-position", `${rowIndex}_${columnIndex}`);
+
+            if (cellValue !== 0) {
+                const colors = {
+                    2: "#ffffff",
+                    4: "#fff1d7",
+                    8: "#f3b27a",
+                    16: "#f69664",
+                    32: "#f77c5f",
+                    64: "#f75f3b",
+                    128: "#edd073",
+                    256: "#edcc63",
+                    512: "#edc651",
+                    1024: "#eec744",
+                    2048: "#ecc230",
+                };
+                boxDiv.classList.add(`box_value-${cellValue}`);
+                boxDiv.innerText = cellValue;
+                
+                if (colors[cellValue]) {
+                    boxDiv.style.backgroundColor = colors[cellValue];
+                }
+            } else {
+                boxDiv.classList.add("box_value-0");
+                boxDiv.style.backgroundColor = "#2d2d2d";
+            }
+            board.appendChild(boxDiv);
+        }
+    }
+}
+
 function startGame() {
     const savedGameState = localStorage.getItem("gameState");
     const userChoice = confirm("Restore the previous game?");
@@ -294,11 +318,34 @@ startButton.addEventListener("click", () => {
 });
 
 function updateElement(rowIndex, columnIndex, value) {
-    matrix[rowIndex][columnIndex] = value;
     const element = document.querySelector(`[data-position='${rowIndex}_${columnIndex}']`);
+    matrix[rowIndex][columnIndex] = value;
     element.innerHTML = value ? value : "";
     element.classList.value = "";
-    element.classList.add("box", `box_value-${value}`);
+
+    const colors = {
+        2: "#ffffff",
+        4: "#fff1d7",
+        8: "#f3b27a",
+        16: "#f69664",
+        32: "#f77c5f",
+        64: "#f75f3b",
+        128: "#edd073",
+        256: "#edcc63",
+        512: "#edc651",
+        1024: "#eec744",
+        2048: "#ecc230",
+    };
+
+    if (colors[value]) {
+        element.classList.add("box", `box_value-${value}`);
+        element.style.backgroundColor = colors[value];
+    } else if (value === 0) {
+        element.classList.add("box", "box_value-0");
+        element.style.backgroundColor = "#2d2d2d";
+    } else {
+        element.classList.add("box", `box_value-${value}`);
+    }
 }
 
 function slideDown() {
@@ -358,14 +405,14 @@ function slideRight() {
 function slideLeft() {
     for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
         let num = [];
-        
+
         for (let columnIndex = 0; columnIndex < columns; columnIndex++) {
             let indices = matrix[rowIndex][columnIndex];
             num.push(indices);
         }
-        
+
         num = sumAndFillCells(num);
-        
+
         for (let columnIndex = 0; columnIndex < columns; columnIndex++) {
             updateElement(rowIndex, columnIndex, num[columnIndex]);
         }
