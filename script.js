@@ -165,6 +165,7 @@ board.addEventListener("touchmove", (event) => {
         getXY(event);
         let diffX = touchX - initialX;
         let diffY = touchY - initialY;
+
         if (Math.abs(diffY) > Math.abs(diffX)) {
             swipeDirection = diffY > 0 ? "down" : "up";
         } else {
@@ -244,8 +245,8 @@ function startFullNewGame() {
 
 function startGame() {
     const savedGameState = localStorage.getItem("gameState");
-
     const userChoice = confirm("Restore the previous game?");
+
     if (userChoice) {
         const gameState = JSON.parse(savedGameState);
         matrix = gameState.matrix;
